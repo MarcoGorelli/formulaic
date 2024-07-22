@@ -1,4 +1,5 @@
 from __future__ import annotations
+import narwhals as nw
 from abc import abstractmethod
 
 import inspect
@@ -149,6 +150,9 @@ def encode_contrasts(  # pylint: disable=dangerous-default-value  # always repla
             )
         )
 
+    if levels is not None and isinstance(data, nw.Series):
+        extra_categories = set(data.unique()).difference(levels)
+
     if levels is not None:
         extra_categories = set(pandas.unique(data)).difference(levels)
         if extra_categories:
@@ -160,7 +164,10 @@ def encode_contrasts(  # pylint: disable=dangerous-default-value  # always repla
             )
         data = pandas.Series(pandas.Categorical(data, categories=levels))
     else:
-        data = pandas.Series(data).astype("category")
+        if isinstance(data, nw.Series):
+            data = data.cast(nw.Categorical)
+        else:
+            data = pandas.Series(data).astype("category")
 
     # Perform dummy encoding
     if output in ("pandas", "numpy"):
@@ -170,6 +177,9 @@ def encode_contrasts(  # pylint: disable=dangerous-default-value  # always repla
         categories, encoded = categorical_encode_series_to_sparse_csc_matrix(
             data,
         )
+    elif output == 'narwhals':
+        categories = data.cat.get_categories()
+        encoded = categories.to_dummies()
     else:
         raise ValueError(f"Unknown output type `{repr(output)}`.")
 
@@ -212,7 +222,6 @@ class Contrasts(metaclass=InterfaceMeta):
                 "pandas", "numpy", "sparse", or `None`. If `None` is provided,
                 the output type will be inferred from the input data type.
         """
-
         if output is None:
             if isinstance(dummies, pandas.DataFrame):
                 output = "pandas"

@@ -23,6 +23,12 @@ class ArrowMaterializer(PandasMaterializer):
     def _init(self) -> None:
         self.__data_context = LazyArrowTableProxy(self.data)
 
+    @override
+    def _is_categorical(self, values: Any) -> bool:
+        if isinstance(values, nw.Series):
+            return values.dtype in {nw.Categorical, nw.Enum, nw.String}
+        return super()._is_categorical(values)
+
     @override  # type: ignore
     @property
     def data_context(self):
