@@ -26,7 +26,7 @@ class PandasMaterializer(FormulaMaterializer):
 
     @override
     def _is_categorical(self, values: Any) -> bool:
-        if isinstance(values, (pandas.Series, pandas.Categorical)):
+        if isinstance(values, pandas.Series):
             return values.dtype == object or isinstance(
                 values.dtype, pandas.CategoricalDtype
             )

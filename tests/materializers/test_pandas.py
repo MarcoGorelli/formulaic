@@ -250,7 +250,6 @@ class TestPandasMaterializer:
     def test__is_categorical(self, materializer):
         assert materializer._is_categorical([1, 2, 3]) is False
         assert materializer._is_categorical(pandas.Series(["a", "b", "c"])) is True
-        assert materializer._is_categorical(pandas.Categorical(["a", "b", "c"])) is True
         assert materializer._is_categorical(FactorValues({}, kind="categorical"))
 
     def test_encoding_edge_cases(self, materializer):
