@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, Dict, Sequence
 
 import pandas
+import narwhals as nw
 from interface_meta import override
 
 
@@ -16,6 +17,7 @@ class ArrowMaterializer(PandasMaterializer):
 
     REGISTER_NAME: str = "arrow"
     REGISTER_INPUTS: Sequence[str] = ("pyarrow.lib.Table",)
+    REGISTER_OUTPUTS: Sequence[str] = ("narwhals",)
 
     @override
     def _init(self) -> None:
@@ -29,10 +31,9 @@ class ArrowMaterializer(PandasMaterializer):
 
 class LazyArrowTableProxy:
     def __init__(self, table: pyarrow.Table):
-        self.table = table
-        self.column_names = set(self.table.column_names)
-        self._cache: Dict[str, pandas.Series] = {}
-        self.index = pandas.RangeIndex(len(table))
+        self.table = nw.from_native(table, eager_only=True)
+        self.column_names = set(self.table.columns)
+        self._cache: Dict[str, nw.Series] = {}
 
     def __contains__(self, value: Any) -> Any:
         return value in self.column_names
@@ -41,5 +42,5 @@ class LazyArrowTableProxy:
         if key not in self.column_names:
             raise KeyError(key)
         if key not in self._cache:
-            self._cache[key] = self.table.column(key).to_pandas()
+            self._cache[key] = self.table[key]#.to_pandas()
         return self._cache[key]

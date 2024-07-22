@@ -1,4 +1,5 @@
 from functools import singledispatch
+import narwhals as nw
 from typing import Any, Sequence, Set, Union
 
 import numpy
@@ -69,6 +70,10 @@ def _(values: dict) -> Set[int]:
 @find_nulls.register
 def _(values: pandas.Series) -> Set[int]:
     return set(numpy.flatnonzero(values.isnull().values))
+
+@find_nulls.register
+def _(values: nw.Series) -> Set[int]:
+    return set(values.is_null().arg_true())
 
 
 @find_nulls.register

@@ -1,5 +1,7 @@
 from __future__ import annotations
 import ast
+import narwhals as nw
+from narwhals.dependencies import is_pandas_dataframe
 
 import functools
 import inspect
@@ -131,7 +133,10 @@ class FormulaMaterializer(metaclass=FormulaMaterializerMeta):
     def __init__(
         self, data: Any, context: Optional[Mapping[str, Any]] = None, **params: Any
     ):
-        self.data = data
+        if is_pandas_dataframe(data):
+            self.data = data
+        else:
+            self.data = nw.from_native(data, eager_only=True, strict=False)
         self.context = context or {}
         self.params = params
         self._init()

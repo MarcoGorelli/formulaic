@@ -199,6 +199,12 @@ class PandasMaterializer(FormulaMaterializer):
             return spsparse.hstack([col[1] for col in cols])
         if spec.output == "numpy":
             return numpy.stack([col[1] for col in cols], axis=1)
+        if spec.output == "narwhals":
+            import narwhals as nw
+            return nw.to_native(
+                nw.from_dict({col[0]: col[1] for col in cols},
+                             native_namespace=nw.get_native_namespace(self.data)),
+            )
         return pandas.DataFrame(
             {col[0]: col[1] for col in cols},
             index=pandas_index,
