@@ -179,7 +179,9 @@ def encode_contrasts(  # pylint: disable=dangerous-default-value  # always repla
         )
     elif output == 'narwhals':
         categories = data.cat.get_categories()
-        encoded = categories.to_dummies()
+        encoded = nw.from_native(pandas.get_dummies(categories.to_pandas()), eager_only=True).to_dict(as_series=False)
+        encoded = nw.from_dict(encoded, native_namespace=nw.get_native_namespace(data))
+        breakpoint()
     else:
         raise ValueError(f"Unknown output type `{repr(output)}`.")
 
@@ -222,6 +224,7 @@ class Contrasts(metaclass=InterfaceMeta):
                 "pandas", "numpy", "sparse", or `None`. If `None` is provided,
                 the output type will be inferred from the input data type.
         """
+        breakpoint()
         if output is None:
             if isinstance(dummies, pandas.DataFrame):
                 output = "pandas"
@@ -233,7 +236,7 @@ class Contrasts(metaclass=InterfaceMeta):
                 raise ValueError(
                     f"Cannot impute output type for dummies of type `{type(dummies)}`."
                 )
-        elif output not in ("pandas", "numpy", "sparse"):  # pragma: no cover
+        elif output not in ("pandas", "numpy", "sparse", 'narwhals'):  # pragma: no cover
             raise ValueError(
                 "Output type for contrasts must be one of: 'pandas', 'numpy' or 'sparse'."
             )
