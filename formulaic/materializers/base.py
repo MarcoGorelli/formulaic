@@ -222,7 +222,7 @@ class FormulaMaterializer(metaclass=FormulaMaterializerMeta):
             terms,
             ensure_full_rank=spec.ensure_full_rank,
         )
-
+        breakpoint()
         # Step 2: Generate the columns which will be collated into the full matrix
         cols = []
         for term, scoped_terms in scoped_terms_for_terms:
@@ -235,17 +235,10 @@ class FormulaMaterializer(metaclass=FormulaMaterializerMeta):
                         1, None, {}, spec, drop_rows
                     )
                 else:
+                    breakpoint()
                     scoped_cols.update(
                         self._get_columns_for_term(
-                            [
-                                self._encode_evaled_factor(
-                                    scoped_factor.factor,
-                                    spec,
-                                    drop_rows,
-                                    reduced_rank=scoped_factor.reduced,
-                                )
-                                for scoped_factor in scoped_term.factors
-                            ],
+                            [ self._encode_evaled_factor( scoped_factor.factor, spec, drop_rows, reduced_rank=scoped_factor.reduced,) for scoped_factor in scoped_term.factors ],
                             spec=spec,
                             scale=scoped_term.scale,
                         )
@@ -624,6 +617,7 @@ class FormulaMaterializer(metaclass=FormulaMaterializerMeta):
         drop_rows: Sequence[int],
         reduced_rank: bool = False,
     ) -> Dict[str, Any]:
+        breakpoint()
         if not factor.metadata.encoded:
             if factor.expr in self.encoded_cache:
                 encoded = self.encoded_cache[factor.expr]
@@ -691,14 +685,8 @@ class FormulaMaterializer(metaclass=FormulaMaterializerMeta):
                     )
 
                     if factor.metadata.kind is Factor.Kind.CATEGORICAL:
-                        encoded = map_dict(self._encode_categorical)(
-                            factor_values,
-                            factor.metadata,
-                            encoder_state,
-                            spec,
-                            drop_rows,
-                            reduced_rank=reduced_rank,
-                        )
+                        encoded = map_dict(self._encode_categorical)( factor_values, factor.metadata, encoder_state, spec, drop_rows, reduced_rank=reduced_rank,)
+                        breakpoint()
                     elif factor.metadata.kind is Factor.Kind.NUMERICAL:
                         encoded = map_dict(self._encode_numerical)(
                             factor_values,
