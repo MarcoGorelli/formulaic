@@ -428,9 +428,11 @@ class ModelSpecs(Structured[ModelSpec]):
                 running `ModelSpec.from_spec(model_specs, **attr_overrides)`.
         """
         import narwhals as nw
+        from narwhals.dependencies import is_pandas_dataframe
         from formulaic import ModelMatrices
 
-        data = nw.from_native(data, eager_only=True)
+        if not is_pandas_dataframe(data):
+            data = nw.from_native(data, eager_only=True, strict=False)
 
         if attr_overrides:
             return ModelSpec.from_spec(self, **attr_overrides).get_model_matrix(
