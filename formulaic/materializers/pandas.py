@@ -201,9 +201,11 @@ class PandasMaterializer(FormulaMaterializer):
             return numpy.stack([col[1] for col in cols], axis=1)
         if spec.output == "narwhals":
             import narwhals as nw
+            native_namespace = nw.get_native_namespace(self.data)
             return nw.to_native(
                 nw.from_dict({col[0]: col[1] for col in cols},
-                             native_namespace=nw.get_native_namespace(self.data)),
+                             native_namespace=native_namespace
+                )
             )
         return pandas.DataFrame(
             {col[0]: col[1] for col in cols},

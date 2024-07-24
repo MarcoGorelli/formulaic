@@ -179,9 +179,7 @@ def encode_contrasts(  # pylint: disable=dangerous-default-value  # always repla
         )
     elif output == 'narwhals':
         categories = data.cat.get_categories()
-        encoded = nw.from_native(pandas.get_dummies(categories.to_pandas()), eager_only=True).to_dict(as_series=False)
-        encoded = nw.from_dict(encoded, native_namespace=nw.get_native_namespace(data))
-        breakpoint()
+        encoded = categories.to_dummies()
     else:
         raise ValueError(f"Unknown output type `{repr(output)}`.")
 
@@ -189,6 +187,7 @@ def encode_contrasts(  # pylint: disable=dangerous-default-value  # always repla
     _state["categories"] = categories
 
     # Apply and return contrasts
+    breakpoint()
     return contrasts.apply(
         encoded, levels=categories, reduced_rank=reduced_rank, output=output
     )
