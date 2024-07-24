@@ -152,8 +152,7 @@ def encode_contrasts(  # pylint: disable=dangerous-default-value  # always repla
 
     if levels is not None and isinstance(data, nw.Series):
         extra_categories = set(data.unique()).difference(levels)
-
-    if levels is not None:
+    elif levels is not None:
         extra_categories = set(pandas.unique(data)).difference(levels)
         if extra_categories:
             warnings.warn(
@@ -163,11 +162,10 @@ def encode_contrasts(  # pylint: disable=dangerous-default-value  # always repla
                 DataMismatchWarning,
             )
         data = pandas.Series(pandas.Categorical(data, categories=levels))
+    elif levels is None and isinstance(data, nw.Series):
+        data = data.cast(nw.Categorical)
     else:
-        if isinstance(data, nw.Series):
-            data = data.cast(nw.Categorical)
-        else:
-            data = pandas.Series(data).astype("category")
+        data = pandas.Series(data).astype("category")
 
     # Perform dummy encoding
     if output in ("pandas", "numpy"):
