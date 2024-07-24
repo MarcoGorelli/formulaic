@@ -152,6 +152,16 @@ def encode_contrasts(  # pylint: disable=dangerous-default-value  # always repla
 
     if levels is not None and isinstance(data, nw.Series):
         extra_categories = set(data.unique()).difference(levels)
+        if extra_categories:
+            warnings.warn(
+                "Data has categories outside of the nominated levels (or that were "
+                f"not seen in original dataset): {extra_categories}. They are being "
+                " cast to nan, which will likely skew the results of your analyses.",
+                DataMismatchWarning,
+            )
+        # todo
+        breakpoint()
+        data = pandas.Series(pandas.Categorical(data, categories=levels))
     elif levels is not None:
         extra_categories = set(pandas.unique(data)).difference(levels)
         if extra_categories:
