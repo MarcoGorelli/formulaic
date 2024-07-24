@@ -187,7 +187,6 @@ def encode_contrasts(  # pylint: disable=dangerous-default-value  # always repla
     _state["categories"] = categories
 
     # Apply and return contrasts
-    breakpoint()
     return contrasts.apply(
         encoded, levels=categories, reduced_rank=reduced_rank, output=output
     )
@@ -223,7 +222,6 @@ class Contrasts(metaclass=InterfaceMeta):
                 "pandas", "numpy", "sparse", or `None`. If `None` is provided,
                 the output type will be inferred from the input data type.
         """
-        breakpoint()
         if output is None:
             if isinstance(dummies, pandas.DataFrame):
                 output = "pandas"

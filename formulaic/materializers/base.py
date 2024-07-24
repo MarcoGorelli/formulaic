@@ -96,7 +96,6 @@ class FormulaMaterializerMeta(InterfaceMeta):
     def for_data(cls, data: Any, output: Hashable = None) -> Type[FormulaMaterializer]:
         datacls = data.__class__
         input_type = f"{datacls.__module__}.{datacls.__qualname__}"
-        breakpoint()
         if input_type not in cls.REGISTERED_INPUTS:
             raise FormulaMaterializerNotFoundError(
                 f"No materializer has been registered for input type {repr(input_type)}. Available input types are: {set(cls.REGISTER_INPUTS)}."
