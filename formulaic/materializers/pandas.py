@@ -202,6 +202,7 @@ class PandasMaterializer(FormulaMaterializer):
         if spec.output == "narwhals":
             import narwhals as nw
             native_namespace = nw.get_native_namespace(self.data)
+            breakpoint()
             return nw.to_native(
                 nw.from_dict({col[0]: col[1] for col in cols},
                              native_namespace=native_namespace
