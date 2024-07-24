@@ -16,7 +16,7 @@ if TYPE_CHECKING:  # pragma: no cover
 class ArrowMaterializer(PandasMaterializer):
 
     REGISTER_NAME: str = "arrow"
-    REGISTER_INPUTS: Sequence[str] = ("narwhals.dataframe.dataframe",)
+    REGISTER_INPUTS: Sequence[str] = ("narwhals.dataframe.DataFrame",)
     REGISTER_OUTPUTS: Sequence[str] = ("narwhals",)
 
     @override
