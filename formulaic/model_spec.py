@@ -427,7 +427,10 @@ class ModelSpecs(Structured[ModelSpec]):
                 constructing model matrices. This is shorthand for first
                 running `ModelSpec.from_spec(model_specs, **attr_overrides)`.
         """
+        import narwhals as nw
         from formulaic import ModelMatrices
+
+        data = nw.from_native(data, eager_only=True)
 
         if attr_overrides:
             return ModelSpec.from_spec(self, **attr_overrides).get_model_matrix(
