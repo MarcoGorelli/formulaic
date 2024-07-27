@@ -73,8 +73,9 @@ def C(
         encoder_state: Dict[str, Any],
         model_spec: ModelSpec,
     ) -> FactorValues:
-        values = pandas.Series(values)
-        values = values.drop(index=values.index[drop_rows])
+        if not isinstance(values, nw.Series):
+            values = pandas.Series(values)
+            values = values.drop(index=values.index[drop_rows])
         return encode_contrasts(
             values,
             contrasts=contrasts,
@@ -161,7 +162,7 @@ def encode_contrasts(  # pylint: disable=dangerous-default-value  # always repla
                 DataMismatchWarning,
             )
         # todo
-        
+        breakpoint()
         data = pandas.Series(pandas.Categorical(data, categories=levels))
     elif levels is not None:
         extra_categories = set(pandas.unique(data)).difference(levels)
@@ -335,7 +336,7 @@ class Contrasts(metaclass=InterfaceMeta):
 
         if sparse:
             return coding_matrix
-
+        breakpoint()
         return pandas.DataFrame(
             coding_matrix,
             columns=self.get_coding_column_names(levels, reduced_rank=reduced_rank),
@@ -398,6 +399,7 @@ class Contrasts(metaclass=InterfaceMeta):
         )
         if sparse:
             return coefficient_matrix
+        breakpoint()
         return pandas.DataFrame(
             coefficient_matrix,
             columns=levels,
@@ -513,6 +515,8 @@ class TreatmentContrasts(Contrasts):
             drop_index = self._find_base_index(levels)
             mask = numpy.ones(len(levels), dtype=bool)
             mask[drop_index] = False
+            if isinstance(dummies, nw.DataFrame):
+                return dummies.select(x for x, m in zip(dummies.columns, mask) if m)
             return (
                 dummies
                 if sparse or isinstance(dummies, numpy.ndarray)
