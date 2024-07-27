@@ -132,7 +132,10 @@ class FormulaMaterializer(metaclass=FormulaMaterializerMeta):
     def __init__(
         self, data: Any, context: Optional[Mapping[str, Any]] = None, **params: Any
     ):
-        self.data = data
+        if not is_pandas_dataframe(data):
+            self.data = nw.from_native(data, eager_only=True)
+        else:
+            self.data = data
         self.context = context or {}
         self.params = params
         self._init()

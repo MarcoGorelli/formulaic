@@ -37,7 +37,7 @@ class ArrowMaterializer(PandasMaterializer):
 
 class LazyArrowTableProxy:
     def __init__(self, table: nw.DataFrame):
-        self.table = table
+        self.table = nw.from_native(table, eager_only=True)
         self.column_names = set(self.table.columns)
         self._cache: Dict[str, nw.Series] = {}
 

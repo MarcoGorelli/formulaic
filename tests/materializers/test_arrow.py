@@ -1,4 +1,5 @@
 import numpy
+import pyarrow as pa
 import pandas
 import pytest
 import scipy.sparse as spsparse
@@ -51,14 +52,14 @@ class TestArrowMaterializer:
     @pytest.mark.parametrize("formula,tests", ARROW_TESTS.items())
     def test_get_model_matrix(self, materializer, formula, tests):
         mm = materializer.get_model_matrix(formula, ensure_full_rank=True)
-        assert isinstance(mm, pandas.DataFrame)
+        assert isinstance(mm, pa.Table)
         assert mm.shape == (3, len(tests[0]))
-        assert list(mm.columns) == tests[0]
+        assert mm.column_names == tests[0]
 
         mm = materializer.get_model_matrix(formula, ensure_full_rank=False)
-        assert isinstance(mm, pandas.DataFrame)
+        assert isinstance(mm, pa.Table)
         assert mm.shape == (3, len(tests[1]))
-        assert list(mm.columns) == tests[1]
+        assert mm.column_names == tests[1]
 
     @pytest.mark.parametrize("formula,tests", ARROW_TESTS.items())
     def test_get_model_matrix_sparse(self, materializer, formula, tests):
