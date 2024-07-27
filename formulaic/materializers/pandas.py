@@ -108,7 +108,6 @@ class PandasMaterializer(FormulaMaterializer):
 
         if drop_rows:
             values = drop_nulls(values, indices=drop_rows)
-        breakpoint()
         return as_columns(encode_contrasts( values, reduced_rank=False, _metadata=metadata, _state=encoder_state, _spec=spec,))
 
     @override
