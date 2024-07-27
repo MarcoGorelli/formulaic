@@ -81,15 +81,15 @@ class TestArrowMaterializer:
         import pyarrow
 
         mm = materializer.get_model_matrix("center(a) - 1")
-        assert isinstance(mm, pandas.DataFrame)
-        assert list(mm.columns) == ["center(a)"]
+        assert isinstance(mm, pyarrow.Table)
+        assert mm.column_names == ["center(a)"]
         assert numpy.allclose(mm["center(a)"], [-1, 0, 1])
 
         mm2 = ArrowMaterializer(
             pyarrow.Table.from_pandas(pandas.DataFrame({"a": [4, 5, 6]}))
         ).get_model_matrix(mm.model_spec)
-        assert isinstance(mm2, pandas.DataFrame)
-        assert list(mm2.columns) == ["center(a)"]
+        assert isinstance(mm2, pyarrow.Table)
+        assert mm2.column_names == ["center(a)"]
         assert numpy.allclose(mm2["center(a)"], [2, 3, 4])
 
     def test_missing_field(self, materializer):
