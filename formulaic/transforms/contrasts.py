@@ -128,6 +128,7 @@ def encode_contrasts(  # pylint: disable=dangerous-default-value  # always repla
             "sparse".
     """
     # Prepare arguments
+    
     _spec = cast("ModelSpec", _spec)
     output = output or _spec.output or "pandas"
     levels = (
@@ -160,7 +161,7 @@ def encode_contrasts(  # pylint: disable=dangerous-default-value  # always repla
                 DataMismatchWarning,
             )
         # todo
-        breakpoint()
+        
         data = pandas.Series(pandas.Categorical(data, categories=levels))
     elif levels is not None:
         extra_categories = set(pandas.unique(data)).difference(levels)
@@ -196,7 +197,7 @@ def encode_contrasts(  # pylint: disable=dangerous-default-value  # always repla
     _state["categories"] = categories
 
     # Apply and return contrasts
-    breakpoint()
+    
     return contrasts.apply(
         encoded, levels=categories, reduced_rank=reduced_rank, output=output
     )
