@@ -1,4 +1,5 @@
 from typing import Iterable, List, Optional, Tuple
+import narwhals as nw
 
 import numpy
 import pandas
@@ -25,7 +26,7 @@ def categorical_encode_series_to_sparse_csc_matrix(
         encoding.
     """
 
-    series = pandas.Categorical(series, levels)
+    series = pandas.Categorical(nw.to_native(series, strict=False), levels)
     levels = list(levels or series.categories)
 
     if not levels:

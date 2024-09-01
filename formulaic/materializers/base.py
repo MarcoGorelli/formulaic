@@ -1,4 +1,5 @@
 from __future__ import annotations
+import narwhals as nw
 
 import ast
 import functools
@@ -91,6 +92,7 @@ class FormulaMaterializerMeta(InterfaceMeta):
         return materializer
 
     def for_data(cls, data: Any, output: Hashable = None) -> Type[FormulaMaterializer]:
+        data = nw.from_native(data, eager_only=True, strict=False)
         datacls = data.__class__
         input_type = f"{datacls.__module__}.{datacls.__qualname__}"
 

@@ -1,4 +1,5 @@
 from functools import singledispatch, wraps
+import narwhals as nw
 from typing import Any, Callable, Dict, Hashable, Union
 
 import numpy
@@ -37,6 +38,10 @@ def as_columns(data: Any) -> Any:
 def _(data: pandas.DataFrame) -> Dict[Hashable, pandas.Series]:
     return dict(data.items())
 
+@as_columns.register
+@propagate_metadata
+def _(data: nw.DataFrame) -> Dict[Hashable, pandas.Series]:
+    return data.to_dict(as_series=True)
 
 @as_columns.register
 @propagate_metadata

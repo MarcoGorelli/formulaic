@@ -1,5 +1,7 @@
 from functools import singledispatch
+import numpy as np
 from typing import Any, Sequence, Set, Union
+import narwhals as nw
 
 import numpy
 import pandas
@@ -55,20 +57,20 @@ def _(values: list) -> Set[int]:
     if isinstance(values, FactorValues):
         # Older versions of pandas (<1.2) cannot unpack this automatically.
         values = values.__wrapped__
-    return find_nulls(pandas.Series(values))
+    return find_nulls(nw.from_native(pandas.Series(values), allow_series=True, strict=False))
 
 
 @find_nulls.register
 def _(values: dict) -> Set[int]:
     indices = set()
     for vs in values.values():
-        indices.update(find_nulls(vs))
+        indices.update(find_nulls(nw.from_native(vs, allow_series=True, strict=False)))
     return indices
 
 
 @find_nulls.register
-def _(values: pandas.Series) -> Set[int]:
-    return set(numpy.flatnonzero(values.isnull().values))
+def _(values: nw.Series) -> Set[int]:
+    return set(values.is_null().arg_true().to_list())
 
 
 @find_nulls.register
@@ -116,8 +118,8 @@ def _(values: list, indices: Sequence[int]) -> list:
 
 
 @drop_rows.register
-def _(values: pandas.Series, indices: Sequence[int]) -> pandas.Series:
-    return values.drop(index=values.index[indices])
+def _(values: nw.Series, indices: Sequence[int]) -> pandas.Series:
+    return values[np.delete(np.arange(len(values)), indices)]
 
 
 @drop_rows.register

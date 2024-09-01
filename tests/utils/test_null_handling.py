@@ -1,4 +1,5 @@
 import re
+import narwhals as nw
 
 import numpy
 import pandas
@@ -22,8 +23,8 @@ def test_find_nulls():
     assert find_nulls(numpy.array([numpy.nan, 1, 2])) == {0}
     assert find_nulls(numpy.array([[numpy.nan, 1], [0, numpy.nan], [1, 1]])) == {0, 1}
     assert find_nulls(FactorValues(numpy.array([numpy.nan, 1, 2]))) == {0}
-    assert find_nulls(pandas.Series([None, 1, 2])) == {0}
-    assert find_nulls(FactorValues(pandas.Series([None, 1, 2]))) == {0}
+    assert find_nulls(nw.from_native(pandas.Series([None, 1, 2]), allow_series=True)) == {0}
+    assert find_nulls(FactorValues(nw.from_native(pandas.Series([None, 1, 2]), allow_series=True))) == {0}
     assert find_nulls(scipy.sparse.csc_matrix([[numpy.nan], [1], [2]])) == {0}
     assert find_nulls(
         FactorValues(scipy.sparse.csc_matrix([[numpy.nan], [1], [2]]))
@@ -59,7 +60,7 @@ def test_find_nulls():
 def test_drop_rows():
     assert drop_rows([1, 2, 3], [1]) == [1, 3]
     assert numpy.all(
-        drop_rows(pandas.Series([1, 2, 3]), [0]) == pandas.Series([2, 3], index=[1, 2])
+        nw.to_native(drop_rows(nw.from_native(pandas.Series([1, 2, 3]), allow_series=True), [0])) == pandas.Series([2, 3], index=[1, 2])
     )
     assert numpy.all(drop_rows(numpy.array([1, 2, 3]), [0]) == numpy.array([2, 3]))
     assert numpy.all(

@@ -1,4 +1,5 @@
 from __future__ import annotations
+import narwhals as nw
 
 import inspect
 import warnings
@@ -150,7 +151,9 @@ def encode_contrasts(  # pylint: disable=dangerous-default-value  # always repla
         )
 
     if levels is not None:
-        extra_categories = set(pandas.unique(data)).difference(levels)
+        data = nw.to_native(data, strict=False)
+        levels = nw.to_native(levels, strict=False)
+        extra_categories = set(pandas.unique(nw.to_native(data, strict=False))).difference(levels)
         if extra_categories:
             warnings.warn(
                 "Data has categories outside of the nominated levels (or that were "
@@ -159,11 +162,17 @@ def encode_contrasts(  # pylint: disable=dangerous-default-value  # always repla
                 DataMismatchWarning,
             )
         data = pandas.Series(pandas.Categorical(data, categories=levels))
+    elif output=='narwhals' or isinstance(data, nw.Series):
+        data = nw.from_native(data, eager_only=True, series_only=True).cast(nw.Categorical)
     else:
         data = pandas.Series(data).astype("category")
 
     # Perform dummy encoding
-    if output in ("pandas", "numpy"):
+    if output == 'narwhals' and isinstance(data, nw.Series):
+        categories = data.cat.get_categories()
+        encoded = categories.to_dummies()
+    elif output in ("pandas", "numpy"):
+        data = nw.to_native(data, strict=False)
         categories = list(data.cat.categories)
         encoded = pandas.get_dummies(data)
     elif output == "sparse":
@@ -171,15 +180,14 @@ def encode_contrasts(  # pylint: disable=dangerous-default-value  # always repla
             data,
         )
     else:
+        print(data)
         raise ValueError(f"Unknown output type `{repr(output)}`.")
 
     # Update state
     _state["categories"] = categories
 
     # Apply and return contrasts
-    return contrasts.apply(
-        encoded, levels=categories, reduced_rank=reduced_rank, output=output
-    )
+    return contrasts.apply(encoded, levels=categories, reduced_rank=reduced_rank, output=output)
 
 
 class Contrasts(metaclass=InterfaceMeta):
@@ -216,6 +224,8 @@ class Contrasts(metaclass=InterfaceMeta):
         if output is None:
             if isinstance(dummies, pandas.DataFrame):
                 output = "pandas"
+            elif isinstance(dummies, nw.DataFrame):
+                output = "narwhals"
             elif isinstance(dummies, numpy.ndarray):
                 output = "numpy"
             elif isinstance(dummies, spsparse.spmatrix):
@@ -224,7 +234,7 @@ class Contrasts(metaclass=InterfaceMeta):
                 raise ValueError(
                     f"Cannot impute output type for dummies of type `{type(dummies)}`."
                 )
-        elif output not in ("pandas", "numpy", "sparse"):  # pragma: no cover
+        elif output not in ("pandas", "numpy", "sparse", 'narwhals'):  # pragma: no cover
             raise ValueError(
                 "Output type for contrasts must be one of: 'pandas', 'numpy' or 'sparse'."
             )
@@ -261,8 +271,9 @@ class Contrasts(metaclass=InterfaceMeta):
         coding_column_names = self.get_coding_column_names(
             levels, reduced_rank=reduced_rank
         )
-
-        if output == "pandas":
+        if isinstance(encoded, nw.DataFrame):
+            encoded = encoded.rename({old: new for old, new in zip(encoded.columns, coding_column_names)})
+        elif output == "pandas":
             encoded = pandas.DataFrame(
                 encoded,
                 columns=coding_column_names,

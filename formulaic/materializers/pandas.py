@@ -15,22 +15,26 @@ from formulaic.utils.null_handling import find_nulls
 
 from .base import FormulaMaterializer
 from .types import NAAction
+import narwhals as nw
 
 if TYPE_CHECKING:  # pragma: no cover
     from formulaic.model_spec import ModelSpec
 
 
 class PandasMaterializer(FormulaMaterializer):
-    REGISTER_NAME = "pandas"
-    REGISTER_INPUTS: Sequence[str] = ("pandas.core.frame.DataFrame", "pandas.DataFrame")
-    REGISTER_OUTPUTS: Sequence[str] = ("pandas", "numpy", "sparse")
+    # REGISTER_NAME = "pandas"
+    REGISTER_NAME = "narwhals"
+    # REGISTER_INPUTS: Sequence[str] = ("pandas.core.frame.DataFrame", "pandas.DataFrame")
+    REGISTER_INPUTS: Sequence[str] = ("narwhals.dataframe.DataFrame",)
+    REGISTER_OUTPUTS: Sequence[str] = ("narwhals", "pandas", "numpy", "sparse")
 
     @override
     def _is_categorical(self, values: Any) -> bool:
-        if isinstance(values, (pandas.Series, pandas.Categorical)):
-            return values.dtype == object or isinstance(
-                values.dtype, pandas.CategoricalDtype
-            )
+        values = nw.from_native(values, strict=False, allow_series=True)
+        if isinstance(values, (nw.Series)):
+            return values.dtype in (nw.Object, nw.String, nw.Categorical, nw.Enum)
+        if isinstance(getattr(values, 'dtype', None), pandas.CategoricalDtype):
+            return True
         return super()._is_categorical(values)
 
     @override
@@ -41,7 +45,7 @@ class PandasMaterializer(FormulaMaterializer):
             return
 
         try:
-            null_indices = find_nulls(values)
+            null_indices = find_nulls(nw.from_native(values, allow_series=True, strict=False))
 
             if na_action is NAAction.RAISE:
                 if null_indices:
@@ -84,7 +88,7 @@ class PandasMaterializer(FormulaMaterializer):
         drop_rows: Sequence[int],
     ) -> Any:
         if drop_rows:
-            values = drop_nulls(values, indices=drop_rows)
+            values = drop_nulls(nw.from_native(values, allow_series=True, strict=False), indices=drop_rows)
         if spec.output == "sparse":
             return spsparse.csc_matrix(
                 numpy.array(values).reshape((values.shape[0], 1))
@@ -107,7 +111,7 @@ class PandasMaterializer(FormulaMaterializer):
         from formulaic.transforms import encode_contrasts
 
         if drop_rows:
-            values = drop_nulls(values, indices=drop_rows)
+            values = nw.to_native(drop_nulls(nw.from_native(values, allow_series=True, strict=False), indices=drop_rows), strict=False)
         return as_columns(
             encode_contrasts(
                 values,
@@ -199,6 +203,11 @@ class PandasMaterializer(FormulaMaterializer):
             return spsparse.hstack([col[1] for col in cols])
         if spec.output == "numpy":
             return numpy.stack([col[1] for col in cols], axis=1)
+        if spec.output == 'narwhals':
+            native_namespace = nw.get_native_namespace(nw.from_native(self.data))
+            return nw.to_native(
+                nw.from_dict({col[0]: col[1] for col in cols}, native_namespace=native_namespace)
+            )
         return pandas.DataFrame(
             {col[0]: col[1] for col in cols},
             index=pandas_index,
