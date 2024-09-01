@@ -90,7 +90,6 @@ class PandasMaterializer(FormulaMaterializer):
         if drop_rows:
             values = drop_nulls(nw.from_native(values, allow_series=True, strict=False), indices=drop_rows)
         if spec.output == "sparse":
-            breakpoint()
             return spsparse.csc_matrix(
                 numpy.array(values).reshape((values.shape[0], 1))
             )
@@ -145,7 +144,6 @@ class PandasMaterializer(FormulaMaterializer):
             for index in reversed(indices):
                 factors.pop(index)
             if spec.output == "sparse":
-                breakpoint()
                 factors.append(
                     {
                         ":".join(solo_factors): functools.reduce(
@@ -167,7 +165,6 @@ class PandasMaterializer(FormulaMaterializer):
             itertools.product(*(factor.items() for factor in reversed(factors)))
         ):
             if spec.output == "sparse":
-                breakpoint()
                 out[names[i]] = scale * functools.reduce(
                     spsparse.csc_matrix.multiply,
                     (p[1] for p in reversed(reversed_product)),
@@ -196,7 +193,6 @@ class PandasMaterializer(FormulaMaterializer):
         if not cols:
             values = numpy.empty((self.data.shape[0], 0))
             if spec.output == "sparse":
-                breakpoint()
                 return spsparse.csc_matrix(values)
             if spec.output == "numpy":
                 return values
