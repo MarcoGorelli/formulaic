@@ -504,11 +504,7 @@ class TreatmentContrasts(Contrasts):
             drop_index = self._find_base_index(levels)
             mask = numpy.ones(len(levels), dtype=bool)
             mask[drop_index] = False
-            return (
-                dummies
-                if sparse or isinstance(dummies, numpy.ndarray)
-                else dummies.iloc
-            )[:, mask]
+            return dummies[:, mask.tolist()]
         return dummies
 
     def _find_base_index(self, levels: Sequence[Hashable]) -> int:
