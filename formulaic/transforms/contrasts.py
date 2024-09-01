@@ -174,7 +174,7 @@ def encode_contrasts(  # pylint: disable=dangerous-default-value  # always repla
     elif output == "numpy":
         data = nw.to_native(data, strict=False)
         categories = list(data.cat.categories)
-        encoded = pandas.get_dummies(data)
+        encoded = nw.from_native(pandas.get_dummies(data), eager_only=True)
     elif output == "sparse":
         categories, encoded = categorical_encode_series_to_sparse_csc_matrix(
             data,
@@ -220,7 +220,7 @@ class Contrasts(metaclass=InterfaceMeta):
                 "pandas", "numpy", "sparse", or `None`. If `None` is provided,
                 the output type will be inferred from the input data type.
         """
-
+        breakpoint()
         if output is None:
             if isinstance(dummies, pandas.DataFrame):
                 output = "pandas"

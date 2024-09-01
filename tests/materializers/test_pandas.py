@@ -159,7 +159,7 @@ class TestPandasMaterializer:
             )
 
     @pytest.mark.parametrize("formula,tests", PANDAS_TESTS.items())
-    @pytest.mark.parametrize("output", ["pandas", "numpy", "sparse"])
+    @pytest.mark.parametrize("output", ["narwhals", "numpy", "sparse"])
     def test_na_handling(self, data_with_nulls, formula, tests, output):
         mm = PandasMaterializer(data_with_nulls).get_model_matrix(
             formula, output=output
