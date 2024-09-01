@@ -16,15 +16,14 @@ from formulaic.parser.types import Factor
 
 class TestFormulaMaterializer:
     def test_registrations(self):
-        assert sorted(FormulaMaterializer.REGISTERED_NAMES) == ["arrow", "pandas"]
+        assert sorted(FormulaMaterializer.REGISTERED_NAMES) == ["arrow", "narwhals"]
         assert sorted(FormulaMaterializer.REGISTERED_INPUTS) == [
-            "pandas.DataFrame",
-            "pandas.core.frame.DataFrame",
+            "narwhals.dataframe.DataFrame",
             "pyarrow.lib.Table",
         ]
 
     def test_retrieval(self):
-        assert FormulaMaterializer.for_materializer("pandas") is PandasMaterializer
+        assert FormulaMaterializer.for_materializer("narwhals") is PandasMaterializer
         assert (
             FormulaMaterializer.for_materializer(PandasMaterializer)
             is PandasMaterializer

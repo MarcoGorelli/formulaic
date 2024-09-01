@@ -161,17 +161,17 @@ def encode_contrasts(  # pylint: disable=dangerous-default-value  # always repla
                 " cast to nan, which will likely skew the results of your analyses.",
                 DataMismatchWarning,
             )
-        data = pandas.Series(pandas.Categorical(data, categories=levels))
+        data = nw.from_native(pandas.Series(pandas.Categorical(data, categories=levels)), series_only=True)
     elif output=='narwhals' or isinstance(data, nw.Series):
         data = nw.from_native(data, eager_only=True, series_only=True).cast(nw.Categorical)
     else:
-        data = pandas.Series(data).astype("category")
+        data = nw.from_native(pandas.Series(data).astype("category"), series_only=True)
 
     # Perform dummy encoding
-    if output == 'narwhals' and isinstance(data, nw.Series):
+    if isinstance(data, nw.Series):
         categories = data.cat.get_categories()
         encoded = categories.to_dummies()
-    elif output in ("pandas", "numpy"):
+    elif output == "numpy":
         data = nw.to_native(data, strict=False)
         categories = list(data.cat.categories)
         encoded = pandas.get_dummies(data)
