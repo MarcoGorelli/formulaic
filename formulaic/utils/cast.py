@@ -41,6 +41,7 @@ def _(data: pandas.DataFrame) -> Dict[Hashable, pandas.Series]:
 @as_columns.register
 @propagate_metadata
 def _(data: nw.DataFrame) -> Dict[Hashable, pandas.Series]:
+    breakpoint()
     return data.to_dict(as_series=True)
 
 @as_columns.register

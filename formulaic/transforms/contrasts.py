@@ -149,7 +149,7 @@ def encode_contrasts(  # pylint: disable=dangerous-default-value  # always repla
                 contrasts,
             )
         )
-
+    breakpoint()
     if levels is not None:
         data = nw.to_native(data, strict=False)
         levels = nw.to_native(levels, strict=False)
@@ -170,7 +170,7 @@ def encode_contrasts(  # pylint: disable=dangerous-default-value  # always repla
     # Perform dummy encoding
     if output == 'narwhals':
         categories = data.cat.get_categories()
-        encoded = categories.to_dummies()
+        encoded = data.to_dummies()
     elif output == "numpy":
         data = nw.to_native(data, strict=False)
         categories = list(data.cat.categories)

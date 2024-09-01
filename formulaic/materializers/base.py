@@ -180,6 +180,7 @@ class FormulaMaterializer(metaclass=FormulaMaterializerMeta):
         drop_rows: Set[int] = set()
         for factor in factors:
             self._evaluate_factor(factor, factor_evaluation_model_spec, drop_rows)
+        breakpoint()
         drop_rows: Sequence[int] = sorted(drop_rows)
 
         # Step 2: Update the structured model specs with the information from
@@ -248,6 +249,7 @@ class FormulaMaterializer(metaclass=FormulaMaterializerMeta):
                         )
                     )
             cols.append((term, scoped_terms, scoped_cols))
+        breakpoint()
 
         # Step 3: Populate remaining model spec fields
         if spec.structure:
