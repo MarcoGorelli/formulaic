@@ -168,7 +168,7 @@ def encode_contrasts(  # pylint: disable=dangerous-default-value  # always repla
         data = nw.from_native(pandas.Series(data).astype("category"), series_only=True)
 
     # Perform dummy encoding
-    if isinstance(data, nw.Series):
+    if output == 'narwhals':
         categories = data.cat.get_categories()
         encoded = categories.to_dummies()
     elif output == "numpy":

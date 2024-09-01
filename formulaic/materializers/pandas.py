@@ -167,7 +167,7 @@ class PandasMaterializer(FormulaMaterializer):
             if spec.output == "sparse":
                 out[names[i]] = scale * functools.reduce(
                     spsparse.csc_matrix.multiply,
-                    (p[1] for p in reversed(reversed_product)),
+                    (nw.to_native(p[1], strict=False) for p in reversed(reversed_product)),
                 )
             else:
                 out[names[i]] = scale * functools.reduce(
@@ -200,7 +200,6 @@ class PandasMaterializer(FormulaMaterializer):
 
         # Otherwise, concatenate columns into model matrix
         if spec.output == "sparse":
-            breakpoint()
             return spsparse.hstack([nw.to_native(col[1], strict=False) for col in cols])
         if spec.output == "numpy":
             return numpy.stack([col[1] for col in cols], axis=1)
