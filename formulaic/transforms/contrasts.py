@@ -238,6 +238,7 @@ class Contrasts(metaclass=InterfaceMeta):
             )
 
         # Short-circuit when we know the output encoding will be empty
+        breakpoint()
         if not levels or len(levels) == 1 and reduced_rank:
             if output == "pandas":
                 encoded = pandas.DataFrame(
@@ -269,7 +270,7 @@ class Contrasts(metaclass=InterfaceMeta):
         coding_column_names = self.get_coding_column_names(
             levels, reduced_rank=reduced_rank
         )
-        if isinstance(encoded, nw.DataFrame):
+        if isinstance(encoded, nw.DataFrame) and output == 'pandas':
             encoded = encoded.rename({old: new for old, new in zip(encoded.columns, coding_column_names)})
         elif output == "pandas":
             encoded = pandas.DataFrame(
