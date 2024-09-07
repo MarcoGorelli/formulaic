@@ -301,7 +301,7 @@ class Contrasts(metaclass=InterfaceMeta):
         sparse: bool = False,
     ) -> Union[pandas.DataFrame, numpy.ndarray, spsparse.spmatrix]:
         coding_matrix = self.get_coding_matrix(levels, reduced_rank, sparse=sparse)
-        return (dummies if sparse else dummies.values) @ coding_matrix
+        return (dummies if sparse else dummies.to_numpy()) @ coding_matrix
 
     # Coding matrix methods
 

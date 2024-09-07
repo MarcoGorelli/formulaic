@@ -267,7 +267,7 @@ class TestContrastsTransform:
                 encoded=True,
             ),
         )
-        assert state["categories"] == ["a", "b", "c"]
+        assert state["categories"].to_list() == ["a", "b", "c"]
 
     def test_invalid_output_type(self):
         with pytest.raises(ValueError, match=r"^Unknown output type"):
