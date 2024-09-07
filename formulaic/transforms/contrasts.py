@@ -513,7 +513,7 @@ class TreatmentContrasts(Contrasts):
         if self.base is self.MISSING:
             return 0
         try:
-            return levels.index(self.base)
+            return levels.to_list().index(self.base)
         except ValueError as e:
             raise ValueError(
                 f"Value `{repr(self.base)}` for `TreatmentContrasts.base` is not among the provided levels."

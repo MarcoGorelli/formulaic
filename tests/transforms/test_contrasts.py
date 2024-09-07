@@ -1,4 +1,5 @@
 import re
+import narwhals as nw
 
 import numpy
 import pandas
@@ -216,7 +217,7 @@ class TestContrastsTransform:
                 encoded=True,
             ),
         )
-        assert state["categories"] == ["a", "b", "c"]
+        assert state["categories"].to_list() == ["a", "b", "c"]
 
     def test_specifying_contrast_class(self):
         state = {}
@@ -242,7 +243,7 @@ class TestContrastsTransform:
                 encoded=True,
             ),
         )
-        assert state["categories"] == ["a", "b", "c"]
+        assert state["categories"].to_list() == ["a", "b", "c"]
 
     def test_specifying_custom_encode_contrasts(self):
         state = {}
@@ -314,7 +315,7 @@ def categories():
 
 @pytest.fixture
 def category_dummies(categories):
-    return pandas.get_dummies(categories)
+    return nw.from_native(pandas.get_dummies(categories), eager_only=True)
 
 
 @pytest.fixture
@@ -499,7 +500,7 @@ class TestSASContrasts:
         encoded = contr.SAS().apply(category_dummies, ["a", "b", "c"])
         assert list(encoded.columns) == ["a", "b"]
         assert encoded.__formulaic_metadata__.drop_field is None
-        assert encoded.to_dict("list") == {
+        assert encoded.to_dict(as_series=False) == {
             "a": [1, 0, 0, 1, 0, 0],
             "b": [0, 1, 0, 0, 1, 0],
         }
@@ -509,7 +510,7 @@ class TestSASContrasts:
         )
         assert list(encoded.columns) == ["a", "b", "c"]
         assert encoded.__formulaic_metadata__.drop_field == "b"
-        assert encoded.to_dict("list") == {
+        assert encoded.to_dict(as_series=False) == {
             "a": [1, 0, 0, 1, 0, 0],
             "b": [0, 1, 0, 0, 1, 0],
             "c": [0, 0, 1, 0, 0, 1],
