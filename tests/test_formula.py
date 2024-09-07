@@ -99,7 +99,7 @@ class TestFormula:
 
     def test_get_model_matrix(self, formula_expr, formula_exprs, data):
         mm_expr = formula_expr.get_model_matrix(data)
-        mm_exprs = formula_exprs.get_model_matrix(data, materializer="pandas")
+        mm_exprs = formula_exprs.get_model_matrix(data, materializer="narwhals")
 
         assert mm_expr.shape == (3, 8)
         assert isinstance(mm_exprs, Structured) and len(mm_exprs) == 2

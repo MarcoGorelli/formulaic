@@ -54,7 +54,7 @@ class TestModelSpec:
     def test_attributes(self, model_spec):
         assert model_spec.formula == Formula("a + A + A:a")
         assert model_spec.ensure_full_rank is True
-        assert model_spec.materializer == "pandas"
+        assert model_spec.materializer == "narwhals"
         assert model_spec.column_names == (
             "Intercept",
             "a",
