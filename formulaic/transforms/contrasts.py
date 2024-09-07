@@ -161,8 +161,11 @@ def encode_contrasts(  # pylint: disable=dangerous-default-value  # always repla
                 DataMismatchWarning,
             )
         data = nw.from_native(pandas.Series(pandas.Categorical(data, categories=levels)), series_only=True)
-    elif output=='pandas' or isinstance(data, nw.Series):
-        data = nw.from_native(data, eager_only=True, series_only=True).cast(nw.Categorical)
+    elif output=='pandas':
+        if isinstance(data, nw.Series):
+            data = data.cast(nw.Categorical)
+        else:
+            data = nw.from_native(pandas.Series(data).astype('category'), series_only=True)
     else:
         data = nw.from_native(pandas.Series(data).astype("category"), series_only=True)
 
