@@ -168,7 +168,7 @@ def encode_contrasts(  # pylint: disable=dangerous-default-value  # always repla
         data = nw.from_native(pandas.Series(data).astype("category"), series_only=True)
 
     # Perform dummy encoding
-    if output == 'narwhals':
+    if output == 'pandas':
         categories = data.cat.get_categories()
         encoded = data.to_dummies()
     elif output == "numpy":
@@ -225,7 +225,7 @@ class Contrasts(metaclass=InterfaceMeta):
             if isinstance(dummies, pandas.DataFrame):
                 output = "pandas"
             elif isinstance(dummies, nw.DataFrame):
-                output = "narwhals"
+                output = "pandas"
             elif isinstance(dummies, numpy.ndarray):
                 output = "numpy"
             elif isinstance(dummies, spsparse.spmatrix):
