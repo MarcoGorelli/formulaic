@@ -149,7 +149,6 @@ def encode_contrasts(  # pylint: disable=dangerous-default-value  # always repla
                 contrasts,
             )
         )
-    breakpoint()
     if levels is not None:
         data = nw.to_native(data, strict=False)
         levels = nw.to_native(levels, strict=False)
@@ -162,7 +161,7 @@ def encode_contrasts(  # pylint: disable=dangerous-default-value  # always repla
                 DataMismatchWarning,
             )
         data = nw.from_native(pandas.Series(pandas.Categorical(data, categories=levels)), series_only=True)
-    elif output=='narwhals' or isinstance(data, nw.Series):
+    elif output=='pandas' or isinstance(data, nw.Series):
         data = nw.from_native(data, eager_only=True, series_only=True).cast(nw.Categorical)
     else:
         data = nw.from_native(pandas.Series(data).astype("category"), series_only=True)
@@ -220,7 +219,6 @@ class Contrasts(metaclass=InterfaceMeta):
                 "pandas", "numpy", "sparse", or `None`. If `None` is provided,
                 the output type will be inferred from the input data type.
         """
-        breakpoint()
         if output is None:
             if isinstance(dummies, pandas.DataFrame):
                 output = "pandas"

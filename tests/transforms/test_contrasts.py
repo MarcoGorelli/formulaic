@@ -57,7 +57,7 @@ class TestContrastsTransform:
                 encoded=True,
             ),
         )
-        assert state["categories"] == ["a", "b", "c"]
+        assert state["categories"].to_list() == ["a", "b", "c"]
 
         with pytest.warns(DataMismatchWarning):
             _compare_factor_values(
@@ -82,7 +82,7 @@ class TestContrastsTransform:
                     encoded=True,
                 ),
             )
-            assert state["categories"] == ["a", "b", "c"]
+            assert state["categories"].to_list() == ["a", "b", "c"]
 
         _compare_factor_values(
             encode_contrasts(
@@ -106,7 +106,7 @@ class TestContrastsTransform:
                 encoded=True,
             ),
         )
-        assert state["categories"] == ["a", "b", "c"]
+        assert state["categories"].to_list() == ["a", "b", "c"]
 
     def test_sparse(self):
         state = {}
