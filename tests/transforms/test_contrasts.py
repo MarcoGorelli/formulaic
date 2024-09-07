@@ -331,7 +331,7 @@ class TestTreatmentContrasts:
         encoded = contrasts.apply(category_dummies, ["a", "b", "c"])
         assert list(encoded.columns) == ["b", "c"]
         assert encoded.__formulaic_metadata__.drop_field is None
-        assert encoded.to_dict("list") == {
+        assert encoded.to_dict(as_series=False) == {
             "b": [0, 1, 0, 0, 1, 0],
             "c": [0, 0, 1, 0, 0, 1],
         }
@@ -341,14 +341,14 @@ class TestTreatmentContrasts:
         )
         assert list(encoded_spanning.columns) == ["a", "b", "c"]
         assert encoded_spanning.__formulaic_metadata__.drop_field == "a"
-        assert encoded_spanning.to_dict("list") == {
+        assert encoded_spanning.to_dict(as_series=False) == {
             "a": [1, 0, 0, 1, 0, 0],
             "b": [0, 1, 0, 0, 1, 0],
             "c": [0, 0, 1, 0, 0, 1],
         }
 
         encoded_spanning = contrasts.apply(
-            category_dummies.values, ["a", "b", "c"], reduced_rank=False
+            category_dummies.to_numpy(), ["a", "b", "c"], reduced_rank=False
         )
         assert encoded_spanning.__formulaic_metadata__.drop_field == "a"
         assert numpy.allclose(
@@ -365,7 +365,7 @@ class TestTreatmentContrasts:
         encoded_base = contr.treatment("b").apply(category_dummies, ["a", "b", "c"])
         assert list(encoded_base.columns) == ["a", "c"]
         assert encoded_base.__formulaic_metadata__.drop_field is None
-        assert encoded_base.to_dict("list") == {
+        assert encoded_base.to_dict(as_series=False) == {
             "a": [1, 0, 0, 1, 0, 0],
             "c": [0, 0, 1, 0, 0, 1],
         }
