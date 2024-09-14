@@ -12,9 +12,9 @@ if TYPE_CHECKING:  # pragma: no cover
     import pyarrow
 
 
-class ArrowMaterializer(PandasMaterializer):
-    REGISTER_NAME = "arrow"
-    REGISTER_INPUTS: Sequence[str] = ("pyarrow.lib.Table",)
+class NarwhalsMaterializer(PandasMaterializer):
+    REGISTER_NAME = "narwhals"
+    REGISTER_INPUTS: Sequence[str] = ("narwhals.dataframe.DataFrame",)
 
     @override
     def _init(self) -> None:
@@ -34,9 +34,11 @@ class LazyArrowTableProxy(Mapping):
         self.index = pandas.RangeIndex(len(table))
 
     def __contains__(self, value: Any) -> Any:
+        breakpoint()
         return value in self.column_names
 
     def __getitem__(self, key: str) -> Any:
+        breakpoint()
         if key not in self.column_names:
             raise KeyError(key)
         if key not in self._cache:
@@ -44,7 +46,9 @@ class LazyArrowTableProxy(Mapping):
         return self._cache[key]
 
     def __iter__(self) -> Iterator[str]:
+        breakpoint()
         return iter(self.column_names)
 
     def __len__(self) -> int:
+        breakpoint()
         return len(self.column_names)

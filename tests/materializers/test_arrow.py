@@ -3,7 +3,7 @@ import pandas
 import pytest
 import scipy.sparse as spsparse
 
-from formulaic.materializers import ArrowMaterializer
+from formulaic.materializers import NarwhalsMaterializer
 
 
 def check_for_pyarrow():
@@ -46,7 +46,7 @@ class TestArrowMaterializer:
 
     @pytest.fixture
     def materializer(self, data):
-        return ArrowMaterializer(data)
+        return NarwhalsMaterializer(data)
 
     def test_data_wrapper(self, materializer):
         assert set(materializer.data_context) == {"a", "A"}
@@ -88,7 +88,7 @@ class TestArrowMaterializer:
         assert list(mm.columns) == ["center(a)"]
         assert numpy.allclose(mm["center(a)"], [-1, 0, 1])
 
-        mm2 = ArrowMaterializer(
+        mm2 = NarwhalsMaterializer(
             pyarrow.Table.from_pandas(pandas.DataFrame({"a": [4, 5, 6]}))
         ).get_model_matrix(mm.model_spec)
         assert isinstance(mm2, pandas.DataFrame)
