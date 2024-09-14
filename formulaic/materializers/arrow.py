@@ -41,7 +41,7 @@ class LazyArrowTableProxy(Mapping):
         if key not in self.column_names:
             raise KeyError(key)
         if key not in self._cache:
-            self._cache[key] = self.table[key].to_pandas()
+            self._cache[key] = self.table[key]#.to_pandas()
         return self._cache[key]
 
     def __iter__(self) -> Iterator[str]:

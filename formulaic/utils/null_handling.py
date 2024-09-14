@@ -6,6 +6,7 @@ import pandas
 import scipy.sparse as spsparse
 
 from formulaic.materializers.types import FactorValues
+import narwhals as nw
 
 
 @singledispatch
@@ -70,6 +71,9 @@ def _(values: dict) -> Set[int]:
 def _(values: pandas.Series) -> Set[int]:
     return set(numpy.flatnonzero(values.isnull().values))
 
+@find_nulls.register
+def _(values: nw.Series) -> Set[int]:
+    return set(values.is_null().arg_true().to_list())
 
 @find_nulls.register
 def _(values: numpy.ndarray) -> Set[int]:
@@ -119,6 +123,12 @@ def _(values: list, indices: Sequence[int]) -> list:
 def _(values: pandas.Series, indices: Sequence[int]) -> pandas.Series:
     return values.drop(index=values.index[indices])
 
+@drop_rows.register
+def _(values: nw.Series, indices: Sequence[int]) -> nw.Series:
+    # TODO: Is there a better narwhals native way to do this?
+    selector = numpy.zeros(len(values), dtype=bool)
+    selector[list(indices)] = True
+    return values.filter(~selector)
 
 @drop_rows.register
 def _(values: numpy.ndarray, indices: Sequence[int]) -> numpy.ndarray:
