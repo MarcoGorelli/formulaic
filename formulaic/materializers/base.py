@@ -233,21 +233,21 @@ class FormulaMaterializer(metaclass=FormulaMaterializerMeta):
                         * self._encode_constant(1, None, {}, spec, drop_rows)
                     )
                 else:
-                    scoped_cols.update(
-                        self._get_columns_for_term(
-                            [
-                                self._encode_evaled_factor(
-                                    scoped_factor.factor,
-                                    spec,
-                                    drop_rows,
-                                    reduced_rank=scoped_factor.reduced,
-                                )
-                                for scoped_factor in scoped_term.factors
-                            ],
+                    factors = [
+                        self._encode_evaled_factor(
+                            scoped_factor.factor,
+                            spec,
+                            drop_rows,
+                            reduced_rank=scoped_factor.reduced,
+                        )
+                        for scoped_factor in scoped_term.factors
+                    ]
+                    ret = self._get_columns_for_term(
+                            factors,
                             spec=spec,
                             scale=scoped_term.scale,
                         )
-                    )
+                    scoped_cols.update(ret)
             cols.append((term, scoped_terms, scoped_cols))
 
         # Step 3: Populate remaining model spec fields
@@ -546,7 +546,6 @@ class FormulaMaterializer(metaclass=FormulaMaterializerMeta):
 
             if not isinstance(value, FactorValues):
                 value = FactorValues(value)
-
             if value.__formulaic_metadata__.kind is Factor.Kind.UNKNOWN:
                 if self._is_categorical(value):
                     kind = Factor.Kind.CATEGORICAL
@@ -691,7 +690,6 @@ class FormulaMaterializer(metaclass=FormulaMaterializerMeta):
                         self._extract_columns_for_encoding(factor),
                         metadata=factor.metadata,
                     )
-
                     if factor.metadata.kind is Factor.Kind.CATEGORICAL:
                         encoded = map_dict(self._encode_categorical)(
                             factor_values,

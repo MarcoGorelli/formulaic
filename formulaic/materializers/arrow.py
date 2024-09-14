@@ -26,6 +26,12 @@ class NarwhalsMaterializer(PandasMaterializer):
     def data_context(self):
         return self.__data_context
 
+    @override
+    def _is_categorical(self, values: Any) -> bool:
+        if isinstance(values, nw.Series):
+            return values.dtype in {nw.Categorical, nw.Enum, nw.String}
+        return super()._is_categorical(values)
+
 
 class LazyArrowTableProxy(Mapping):
     def __init__(self, table: pyarrow.Table):
